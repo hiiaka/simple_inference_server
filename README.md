@@ -1,3 +1,4 @@
+# Setup
 Make MNIST model
 ```sh
 python3 mnist.py
@@ -8,6 +9,7 @@ Make MNIST inference image
 docker build -t my-inference-image .
 ```
 
+# Inference at local host
 Start MNIST inference container
 ```sh
 docker run -p 8080:8080 my-inference-image
@@ -30,6 +32,29 @@ Inference
 curl -X POST -H "Content-Type: application/json" \
     -d @request.json \
     http://localhost:8080/invocations
+
+# {"prediction":7}
+```
+
+# Inference at AWS
+
+Push MNIST inference image to ECR
+```sh
+acount_id=$(aws sts get-caller-identity --query Account --output text)
+region=$(aws configure get region)
+aws ecr create-repository --repository-name my-inference-image
+aws ecr get-login-password | docker login --username AWS --password-stdin ${acount_id}.dkr.ecr.${region}.amazonaws.com
+docker tag my-inference-image:latest ${acount_id}.dkr.ecr.${region}.amazonaws.com/my-inference-image:latest
+docker push ${acount_id}.dkr.ecr.${region}.amazonaws.com/my-inference-image:latest
+```
+Mkake MNIST inference endpoint
+```sh
+python3 gen_endpoint.py
+```
+
+Inference
+```sh
+python3 request_inference.py
 
 # {"prediction":7}
 ```
