@@ -40,12 +40,12 @@ curl -X POST -H "Content-Type: application/json" \
 
 Push MNIST inference image to ECR
 ```sh
-acount_id=$(aws sts get-caller-identity --query Account --output text)
+account_id=$(aws sts get-caller-identity --query Account --output text)
 region=$(aws configure get region)
 aws ecr create-repository --repository-name my-inference-image
-aws ecr get-login-password | docker login --username AWS --password-stdin ${acount_id}.dkr.ecr.${region}.amazonaws.com
-docker tag my-inference-image:latest ${acount_id}.dkr.ecr.${region}.amazonaws.com/my-inference-image:latest
-docker push ${acount_id}.dkr.ecr.${region}.amazonaws.com/my-inference-image:latest
+aws ecr get-login-password | docker login --username AWS --password-stdin ${account_id}.dkr.ecr.${region}.amazonaws.com
+docker tag my-inference-image:latest ${account_id}.dkr.ecr.${region}.amazonaws.com/my-inference-image:latest
+docker push ${account_id}.dkr.ecr.${region}.amazonaws.com/my-inference-image:latest
 ```
 Mkake MNIST inference endpoint
 ```sh
